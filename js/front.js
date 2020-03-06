@@ -24,13 +24,11 @@ $(function () {
     if (pathname === "checkout3.html") {
         $(document).trigger("view:Payment");
     }
-
     
     $(".box-footer [type='submit']").click(function() {
         $("document").trigger("conversion");
     });
     
-
     if ($(".breadcrumb .breadcrumb-item").text().indexOf('Ladies') > -1) {
         $(document).trigger("customer:Female");
     } else {
