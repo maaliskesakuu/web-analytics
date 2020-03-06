@@ -1,45 +1,97 @@
-$(function () {
-    var pathname = window.location.pathname;
+// $(function () {
+//     var pathname = window.location.pathname;
 
-    if (pathname === "/index.html") {
-        $(document).trigger("view:HomePage");
-    }
+//     if (pathname === "/index.html") {
+//         $(document).trigger("view:HomePage");
+//     }
 
-    if (pathname === "/detail.html") {
-        $(document).trigger("view:productPage");
-    }
+//     if (pathname === "/detail.html") {
+//         $(document).trigger("view:productPage"
+//         );
+//     }
 
-    if (pathname === "/basket.html") {
-        $(document).trigger("view:Basket");
-    }
+//     if (pathname === "/basket.html") {
+//         $(document).trigger("view:Basket");
+//     }
 
-    if (pathname === "checkout1.html") {
-        $(document).trigger("view:CheckOut");
-    }
+//     if (pathname === "checkout1.html") {
+//         $(document).trigger("view:CheckOut");
+//     }
 
-    if (pathname === "checkout2.html") {
-        $(document).trigger("view:Delivery");
-    }
+//     if (pathname === "checkout2.html") {
+//         $(document).trigger("view:Delivery");
+//     }
 
-    if (pathname === "checkout3.html") {
-        $(document).trigger("view:Payment");
-    }
+//     if (pathname === "checkout3.html") {
+//         $(document).trigger("view:Payment");
+//     }
     
-    $(".box-footer [type='submit']").click(function() {
+    $(".box-footer [type='submit']").click(function () {
         $("document").trigger("conversion");
     });
-    
-    if ($(".breadcrumb .breadcrumb-item").text().indexOf('Ladies') > -1) {
-        $(document).trigger("customer:Female");
-    } else {
-        $(document).trigger("customer:Male");
-    }
 
-    if ($(".breadcrumb .breadcrumb-item").text().indexOf('Shoes') > -1) {
-        $(document).trigger("view:Shoes");
-    } else {
-        $(document).trigger("view:Clothing");
-    }
+    $(function () { 
+        function getPageName() {
+            var pathname = window.location.pathname;
+            if (pathname === '/index.html') {
+                return 'HomePage';
+            } else if (pathname.indexOf('detail.html') > -1) {
+                return 'ProductPage';
+            }   
+        }        
+
+        function getProductInfo() {
+            return {
+                productName : $('#productMain h1 .text-center').text(),
+                productPrice : $('#productMain .price').text()
+            }
+        }
+
+        function getCartSummary() {
+            var _products = [];
+
+            return {
+                totalPrice,
+                products : _products
+            }
+        }
+
+        function getParam() {
+            var pageName = getPageName();
+            var result = null;
+
+            if (pageName === 'ProductPage') {
+                result = getProductInfo();
+                result.productName = $('#productMain h1 .text-center').text();
+                result.productPrice = $('#productMain .price').text();
+                result.productImage = $('#productMain .owl-thumb-item:first-child').text();
+                return result;
+            } else if (pageName === "Checkout") {
+                // get order information, add found information to the result
+                return getCartSummary;
+            }
+            return result;
+        }
+
+        function triggerPageEvent() {
+            var pageName = getPageName();
+            var params = getParam();
+            $(document).trigger('view:' + pageName, params);
+        }
+
+        triggerPageEvent();
+    
+    // if ($(".breadcrumb .breadcrumb-item").text().indexOf('Ladies') > -1) {
+    //     $(document).trigger("customer:Female");
+    // } else {
+    //     $(document).trigger("customer:Male");
+    // }
+
+    // if ($(".breadcrumb .breadcrumb-item").text().indexOf('Shoes') > -1) {
+    //     $(document).trigger("view:Shoes");
+    // } else {
+    //     $(document).trigger("view:Clothing");
+    // }
 
     $('.shop-detail-carousel').owlCarousel({
         items: 1,
