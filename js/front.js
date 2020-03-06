@@ -25,9 +25,11 @@ $(function () {
         $(document).trigger("view:Payment");
     }
 
-    if (pathname === "/checkout4.html") {
-        $(".btn btn-primary").on("click", "conversation");
-    }
+    
+    $(".box-footer [type='submit']").click(function() {
+        $("document").trigger("conversion");
+    });
+    
 
     if ($(".breadcrumb .breadcrumb-item").text().indexOf('Ladies') > -1) {
         $(document).trigger("customer:Female");
