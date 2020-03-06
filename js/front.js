@@ -1,8 +1,32 @@
 $(function () {
     var pathname = window.location.pathname;
 
+    if (pathname === "/index.html") {
+        $(document).trigger("view:HomePage");
+    }
+
     if (pathname === "/detail.html") {
         $(document).trigger("view:productPage");
+    }
+
+    if (pathname === "/basket.html") {
+        $(document).trigger("view:Basket");
+    }
+
+    if (pathname === "checkout1.html") {
+        $(document).trigger("view:CheckOut");
+    }
+
+    if (pathname === "checkout2.html") {
+        $(document).trigger("view:Delivery");
+    }
+
+    if (pathname === "checkout3.html") {
+        $(document).trigger("view:Payment");
+    }
+
+    if (pathname === "/checkout4.html") {
+        $(".btn btn-primary").on("click", "conversation");
     }
 
     if ($(".breadcrumb .breadcrumb-item").text().indexOf('Ladies') > -1) {
@@ -16,10 +40,6 @@ $(function () {
     } else {
         $(document).trigger("view:Clothing");
     }
-
-    // if (pathname === "/checkout4.html") {
-    //     $(".btn btn-primary").on("conversation")
-    // }
 
     $('.shop-detail-carousel').owlCarousel({
         items: 1,
