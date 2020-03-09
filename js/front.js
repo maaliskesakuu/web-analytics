@@ -37,7 +37,8 @@
                 return 'HomePage';
             } else if (pathname.indexOf('detail.html') > -1) {
                 return 'ProductPage';
-            }   
+            } else if (pathname.indexOf('checkout4.html') > -1) {
+                return 'Checkout4';
         }        
 
         function getProductInfo() {
@@ -47,13 +48,22 @@
             }
         }
 
-        function getCartSummary() {
-            var _products = [];
+        function getCartInfo() {
+            var productInfoEls = $('#checkout table tbody tr');
+            var result = {};
+            result.totalPurchase = $('#checkout table tfoot th').eq(1).text();
+            result.productList = [];
+            $.each(productInfoEls, function(index, el) {
+                result.productList.push({
+                    productName: $(el).children().eq(1).text(),
+                    quantity: $(el).children().eq(2).text(),
+                    productPrice: $(el).children().eq(3).text(),
+                    discount: $(el).children().eq(4).text(),
+                    totalPrice: $(el).children().eq(5).text()
+                });
+            });
 
-            return {
-                totalPrice,
-                products : _products
-            }
+            return result;
         }
 
         function getParam() {
@@ -62,13 +72,10 @@
 
             if (pageName === 'ProductPage') {
                 result = getProductInfo();
-                result.productName = $('#productMain h1 .text-center').text();
-                result.productPrice = $('#productMain .price').text();
-                result.productImage = $('#productMain .owl-thumb-item:first-child').text();
                 return result;
-            } else if (pageName === "Checkout") {
-                // get order information, add found information to the result
-                return getCartSummary;
+            } else if (pageName === "Checkout4") {
+                result = getCartInfo();
+                return result;
             }
             return result;
         }
@@ -76,7 +83,14 @@
         function triggerPageEvent() {
             var pageName = getPageName();
             var params = getParam();
-            $(document).trigger('view:' + pageName, params);
+
+            if (pageName === 'Checkout4') {
+                $('#checkput button').on('click', function () {
+                    $(document).trigger('conversion', params);
+                });
+            } else {
+                $(document).trigger('view:' + pageName, params);
+            }
         }
 
         triggerPageEvent();
