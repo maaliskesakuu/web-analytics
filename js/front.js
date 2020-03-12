@@ -26,6 +26,12 @@
 //         $(document).trigger("view:Payment");
 //     }
     
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5977LQR');
+
     $(".box-footer [type='submit']").click(function () {
         $("document").trigger("conversion");
     });
@@ -47,13 +53,25 @@
             }
         }
 
-        function getCartSummary() {
-            var _products = [];
-
-            return {
-                totalPrice,
-                products : _products
-            }
+        function getCartInfo(){
+            var productInfoEls = $('#checkout table tbody tr');
+            var result = {};
+        
+            result.totalPurchase = $('#checkout table tfoot th').eq(1).text();
+            result.userAgent = navigator.userAgent;
+            result.productList = [];
+        
+            $.each(productInfoEls, function(index, el){
+                result.productList.push({
+                    productName: $(el).children().eq(1).text(),
+                    quantity: $(el).children().eq(2).text(),
+                    productPrice: $(el).children().eq(3).text(),
+                    discount: $(el).children().eq(4).text(),
+                    totalPrice: $(el).children().eq(5).text()
+                });
+            });
+        
+            return result;
         }
 
         function getParam() {
