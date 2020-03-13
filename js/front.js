@@ -25,26 +25,28 @@
 //     if (pathname === "checkout3.html") {
 //         $(document).trigger("view:Payment");
 //     }
-    
+
 (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-5977LQR');
 
-    $(".box-footer [type='submit']").click(function () {
-        $("document").trigger("conversion");
-    });
+    // $(".box-footer [type='submit']").click(function () {
+    //     $("document").trigger("conversion");
+    // });
 
-    $(function () { 
+    $(function () {
         function getPageName() {
             var pathname = window.location.pathname;
-            if (pathname === '/index.html') {
+            if (pathname.indexOf('index.html') > -1) {
                 return 'HomePage';
             } else if (pathname.indexOf('detail.html') > -1) {
                 return 'ProductPage';
-            }   
-        }        
+            } else if (pathname.indexOf('checkout4.html') > -1) {
+                return 'Checkout4';
+            }
+        }
 
         function getProductInfo() {
             return {
@@ -53,24 +55,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         }
 
+        function generateUniqueId(length) {
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
         function getCartInfo(){
             var productInfoEls = $('#checkout table tbody tr');
             var result = {};
-        
-            result.totalPurchase = $('#checkout table tfoot th').eq(1).text();
-            result.userAgent = navigator.userAgent;
-            result.productList = [];
-        
+
+            result.actionField = {
+                id: generateUniqueId(16),
+                revenue: $('#checkout table tfoot th').eq(1).text().match(/\d+/g).join('.')
+            };
+
+            result.products = [];
+
+            // result.totalPurchase = $('#checkout table tfoot th').eq(1).text();
+            // result.userAgent = navigator.userAgent;
+            // result.productList = [];
+
             $.each(productInfoEls, function(index, el){
-                result.productList.push({
-                    productName: $(el).children().eq(1).text(),
+                result.products.push({
+                    name: $(el).children().eq(1).text(),
                     quantity: $(el).children().eq(2).text(),
-                    productPrice: $(el).children().eq(3).text(),
-                    discount: $(el).children().eq(4).text(),
-                    totalPrice: $(el).children().eq(5).text()
+                    price: $(el).children().eq(3).text().match(/\d+/g).join('.'),
+                    discount: $(el).children().eq(4).text()
                 });
             });
-        
+
             return result;
         }
 
@@ -80,13 +98,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             if (pageName === 'ProductPage') {
                 result = getProductInfo();
-                result.productName = $('#productMain h1 .text-center').text();
-                result.productPrice = $('#productMain .price').text();
-                result.productImage = $('#productMain .owl-thumb-item:first-child').text();
                 return result;
-            } else if (pageName === "Checkout") {
-                // get order information, add found information to the result
-                return getCartSummary;
+            } else if (pageName === "Checkout4") {
+                result = getCartInfo();
+                return result;
             }
             return result;
         }
@@ -94,9 +109,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         function triggerPageEvent() {
             var pageName = getPageName();
             var params = getParam();
-            $(document).trigger('view:' + pageName, params);
-        }
 
+            if (pageName === 'Checkout4') {
+                window.dataLayer.push({
+                    'ecommerce': {
+                        'purcahace': getCartInfo()
+                    }
+                });
+                $('#checkout button').on('click', function () {
+                    $(document).trigger('conversion', params);
+                });
+            } else {
+                $(document).trigger('view:' + pageName, params);
+            }
+        }
+        
         triggerPageEvent();
     
     // if ($(".breadcrumb .breadcrumb-item").text().indexOf('Ladies') > -1) {
